@@ -56,6 +56,16 @@ public class CustomerDTO {
 	public void setAddr(String addr) {
 		this.addr = addr;
 	}
-  
+
+	@Override
+	public String toString() {
+		return "CustomerDTO{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", age=" + age +
+				", tel='" + tel + '\'' +
+				", addr='" + addr + '\'' +
+				'}';
+	}
 }
 

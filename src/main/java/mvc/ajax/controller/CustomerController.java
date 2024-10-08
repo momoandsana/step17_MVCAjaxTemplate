@@ -58,10 +58,15 @@ public class CustomerController implements RestController {
 	public void selectAll(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
+		System.out.println("CustomerController.selectAll");
+		
 		List<CustomerDTO> customerList=customerService.selectAll();
+
+
 
 		Gson gson=new Gson();
 		String jsonResponse=gson.toJson(customerList);
+
 
 		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out=response.getWriter();
@@ -90,6 +95,8 @@ public class CustomerController implements RestController {
 		String id=request.getParameter("id");
 
 		int result=customerService.delete(id);
+
+		System.out.println("result = " + result);
 
 		PrintWriter out=response.getWriter();
 		out.print(result);

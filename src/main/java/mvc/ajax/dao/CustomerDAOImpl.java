@@ -63,6 +63,11 @@ public class CustomerDAOImpl implements CustomerDAO {
 	  List<CustomerDTO> list = new ArrayList<CustomerDTO>();
 	  try {
 	   con = DbUtil.getConnection();
+		  if (con != null) {
+			  System.out.println("DB 연결 성공");
+		  } else {
+			  System.out.println("DB 연결 실패");
+		  }
 	   ps = con.prepareStatement("select * from customer order by id");
 	   rs  = ps.executeQuery();
 	   while(rs.next()){
@@ -93,6 +98,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	  } finally {
 	   DbUtil.dbClose( ps, con);
 	  }
+		 System.out.println("result = " + result);
 	  return result;
 	 }
 

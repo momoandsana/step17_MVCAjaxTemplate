@@ -4,31 +4,29 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Insert title here</title>
 	<style>
-		.a{border:solid red 5px}
-		span{width:150px; color:red}
-		input{border:solid gray 1px}
-		table{width:100% ; border-collapse: collapse;}
-		th,td{border:1px gray solid; text-align:center;padding:3px}
-		h2{text-align:center}
-
-		a{text-decoration: none;}
-		a:hover{color: red}
-
+		.a { border: solid red 5px; }
+		span { width: 150px; color: red; }
+		input { border: solid gray 1px; }
+		table { width: 100%; border-collapse: collapse; }
+		th, td { border: 1px gray solid; text-align: center; padding: 3px; }
+		h2 { text-align: center; }
+		a { text-decoration: none; }
+		a:hover { color: red; }
 	</style>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-	<script type="text/javascript" >
-		$(function(){
+	<script type="text/javascript">
+		$(function() {
 			/*
               1) 전체검색
+              - 서버로부터 고객 리스트 데이터를 가져와 테이블에 출력
             */
 			$.ajax({
-				url:"/ajax?key=customer&methodName=selectAll",
-				type:"get",
-				dataType:"json",
-
-				success:function(result) {
+				url: "/ajax?key=customer&methodName=selectAll",
+				type: "get",
+				dataType: "json",
+				success: function(result) {
 					let str = "";
 					$.each(result, function(index, user) {
 						str += "<tr>";
@@ -41,59 +39,113 @@
 						str += "<td><button data-id='" + user.id + "' class='deleteBtn'>삭제</button></td>";
 						str += "</tr>";
 					});
-					$("#listTable tbody").html(str);  // tbody 안에만 데이터를 넣음
-				}
-				,
+					$("#listTable tbody").html(str);
+				},
 				error: function() {
 					alert("전체검색 중 오류가 발생했습니다.");
 				}
 			});
 
 			/*
-             2) 아이디중복체크
+              2) 아이디중복체크
+              - 이 부분은 아직 구현되지 않음
             */
 
 			/**
 			 3) 가입하기 또는 수정하기
+			 - 가입 버튼을 눌렀을 때 서버로 데이터를 보내는 로직 추가
 			 */
+			$(document).on("click", "#btn", function() {
+				$.ajax({
+					url: "/ajax?key=customer&methodName=insert", // 가입 요청
+					type: "post",
+					data: $("#inForm").serialize(), // 폼 데이터를 직렬화하여 서버로 전송
+					success: function(result) {
+						alert("가입 완료");
+						reloadCustomerList(); // 가입 후 전체 목록을 다시 불러옴
+					},
+					error: function() {
+						alert("가입 중 오류가 발생했습니다."); // 가입 실패 시 알림
+					}
+				});
+			});
 
 			/*
-             4) 아이디를 클릭했을때
+              4) 아이디를 클릭했을 때
+              - 이 부분은 아직 구현되지 않음
             */
 
 			/*
-             5) 삭제하기
-           */
-			$(document).on("click",".deleteBtn",function(){
-				const userId=$(this).data("id");
+              5) 삭제하기
+              - 각 행의 '삭제' 버튼을 클릭했을 때 해당 사용자를 삭제
+            */
+			$(document).on("click", ".deleteBtn", function() {
+				const userId = $(this).data("id"); // 버튼에 저장된 사용자 ID 가져오기
 				$.ajax({
-					url: "/ajax?methodName=delete",
+					url: "/ajax?key=customer&methodName=delete", // 서버에 삭제 요청
 					type: "get",
-					data: { key: "delete", id: userId },
-					success: function(result){
-						alert("삭제완료");
+					data: { id: userId }, // 사용자 ID를 서버로 전송
+					success: function(result) {
+						if(result==='1')
+						{
+							alert("삭제 완료");
+							reloadCustomerList(); // 삭제 후 목록을 다시 불러옴
+						}
+						else
+						{
+							alert("삭제 중 오류a가 발생했습니다.");
+						}
+
 					},
-					error: function() { // error 콜백에 콤마 추가
+					error: function() { // 삭제 실패 시 알림
 						alert("삭제 중 오류가 발생했습니다.");
 					}
 				});
 			});
-		});//ready 끝
+
+		}); // ready 끝
+
+		// 고객 리스트 다시 불러오기 함수
+		function reloadCustomerList() {
+			$.ajax({
+				url: "/ajax?key=customer&methodName=selectAll", // 고객 목록을 다시 불러옴
+				type: "get",
+				dataType: "json",
+				success: function(result) {
+					let str = "";
+					$.each(result, function(index, user) {
+						str += "<tr>";
+						str += "<td>" + (index + 1) + "</td>";
+						str += "<td>" + user.id + "</td>";
+						str += "<td>" + user.name + "</td>";
+						str += "<td>" + user.age + "</td>";
+						str += "<td>" + user.tel + "</td>";
+						str += "<td>" + user.addr + "</td>";
+						str += "<td><button data-id='" + user.id + "' class='deleteBtn'>삭제</button></td>";
+						str += "</tr>";
+					});
+					$("#listTable tbody").html(str);  // tbody 안에 데이터를 추가
+				},
+				error: function() {
+					alert("전체검색 중 오류가 발생했습니다.");
+				}
+			});
+		}
 
 	</script>
 
 </head>
 <body>
-<h2>회원정보 입력 </h2>
+<h2>회원정보 입력</h2>
 
 <form name="inForm" method="post" id="inForm">
 	<table>
-		<tr bgcolor="pink" >
-			<th >아이디</th>
-			<th >이름</th>
-			<th  >나이</th>
-			<th  >전화번호</th>
-			<th  >주소</th>
+		<tr bgcolor="pink">
+			<th>아이디</th>
+			<th>이름</th>
+			<th>나이</th>
+			<th>전화번호</th>
+			<th>주소</th>
 		</tr>
 		<tr>
 			<td style="text-align:left"><input type="text" size="8" name="id" id="id"> <span>중복결과여부</span></td>
@@ -106,16 +158,18 @@
 			<td colspan="5" align="center">
 				<input type="hidden" name="key" value="customer">
 				<input type="hidden" name="methodName" value="insert">
-				<input type="button" value="가입하기"  id="btn">
+				<input type="button" value="가입하기" id="btn">
 			</td>
 		</tr>
 	</table>
 </form>
+
 <br>
 <hr color="red">
 
-<h2> 고객 리스트 !  </h2>
+<h2>고객 리스트 !</h2>
 <table id="listTable">
+	<thead>
 	<tr bgcolor="pink">
 		<th>번호</th>
 		<th>아이디</th>
@@ -125,8 +179,10 @@
 		<th>주소</th>
 		<th>삭제</th>
 	</tr>
+	</thead>
+	<tbody>
 	<!-- 데이터 출력 -->
-
+	</tbody>
 </table>
 
 </body>
