@@ -47,8 +47,18 @@ public class CustomerController implements RestController {
 	public void insert(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
+		String id=request.getParameter("id");
+		String name=request.getParameter("name");
+		int age=Integer.parseInt(request.getParameter("age"));
+		String tel=request.getParameter("tel");
+		String addr=request.getParameter("addr");
 
-	
+		CustomerDTO customerDTO=new CustomerDTO(id, name, age, tel, addr);
+
+		int result=customerService.insert(customerDTO);
+
+		PrintWriter out = response.getWriter();
+		out.print(result);
 	}
 	
 	/**
