@@ -49,6 +49,28 @@
 			/*
               2) 아이디중복체크
             */
+			$(document).on("blur","#id",function(){
+				const userId=$(this).val();
+
+				if(userId!=="")
+				{
+					$.ajax({
+						url: "/ajax?key=customer&methodName=idCheck",
+						type: "get",
+						data:{id:userId},
+						success:function(result){
+							if(result==="중복")
+							{
+								$("span").text("중복된 아이디입니다");
+							}
+							else
+							{
+								$("span").text("사용 가능한 아이디입니다");
+							}
+						}
+					})
+				}
+			})
 
 			/**
 			 3) 가입하기 또는 수정하기

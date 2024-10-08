@@ -35,7 +35,22 @@ public class CustomerController implements RestController {
 	public void idCheck(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
-		
+		String id=request.getParameter("id");
+
+		boolean isDuplicate = customerService.idCheck(id);
+
+		String message;
+		if(isDuplicate)
+		{
+			message="중복";
+		}
+		else
+		{
+			message="사용가능";
+		}
+
+		PrintWriter out = response.getWriter();
+		out.print(message);
 	}
 	
 	
