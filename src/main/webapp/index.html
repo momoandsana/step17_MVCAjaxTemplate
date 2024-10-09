@@ -101,16 +101,16 @@
               - 각 행의 '삭제' 버튼을 클릭했을 때 해당 사용자를 삭제
             */
 			$(document).on("click", ".deleteBtn", function() {
-				const userId = $(this).data("id"); // 버튼에 저장된 사용자 ID 가져오기
+				const userId = $(this).data("id"); // 버튼에 저장된 사용자 id
 				$.ajax({
-					url: "/ajax?key=customer&methodName=delete", // 서버에 삭제 요청
+					url: "/ajax?key=customer&methodName=delete",
 					type: "get",
 					data: { id: userId }, // 사용자 ID를 서버로 전송
 					success: function(result) {
 						if(result==='1')
 						{
 							alert("삭제 완료");
-							reloadCustomerList(); // 삭제 후 목록을 다시 불러옴
+							reloadCustomerList(); // 삭제 후 목록을 다시 불러옴. 이거 안 하면 삭제했는데 계속 목록에 남아있음
 						}
 						else
 						{
@@ -118,7 +118,7 @@
 						}
 
 					},
-					error: function() { // 삭제 실패 시 알림
+					error: function() {
 						alert("삭제 중 오류가 발생했습니다.");
 					}
 				});
@@ -126,10 +126,10 @@
 
 		}); // ready 끝
 
-		// 고객 리스트 다시 불러오기 함수
+		// 고객 리스트 다시 불러오기 함수, 삭제를 했을 때 다시 리로드해야 한다
 		function reloadCustomerList() {
 			$.ajax({
-				url: "/ajax?key=customer&methodName=selectAll", // 고객 목록을 다시 불러옴
+				url: "/ajax?key=customer&methodName=selectAll",
 				type: "get",
 				dataType: "json",
 				success: function(result) {
@@ -145,7 +145,8 @@
 						str += "<td><button data-id='" + user.id + "' class='deleteBtn'>삭제</button></td>";
 						str += "</tr>";
 					});
-					$("#listTable tbody").html(str);  // tbody 안에 데이터를 추가
+					$("#listTable tbody").html(str);
+					// tbody 안에 데이터를 추가, tbody & thead 제대로 구분 안 하면 내용물 삭제했는데 thead 도 같이 없어지는 현상이 있음
 				},
 				error: function() {
 					alert("전체검색 중 오류가 발생했습니다.");
