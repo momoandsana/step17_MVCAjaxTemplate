@@ -126,5 +126,34 @@ public class CustomerDAOImpl implements CustomerDAO {
 	  return result;
 	 }
 
+	@Override
+	public CustomerDTO selectById(String id) {
+		Connection con=null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		CustomerDTO customerDTO=null;
 
+		try
+		{
+			con=DbUtil.getConnection();
+			ps = con.prepareStatement("select * from customer where id=?");
+			ps.setString(1,id);
+			rs=ps.executeQuery();
+
+			if(rs.next())
+			{
+				customerDTO = new CustomerDTO(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5));
+			}
+
+
+
+		} catch (SQLException e) {
+            e.printStackTrace();
+        }
+		finally
+		{
+			DbUtil.dbClose(rs, ps, con);
+		}
+		return customerDTO;
+    }
 }

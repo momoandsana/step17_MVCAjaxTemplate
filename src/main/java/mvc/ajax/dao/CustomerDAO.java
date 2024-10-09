@@ -31,4 +31,8 @@ public interface CustomerDAO {
 	 * */
 	int update(CustomerDTO customerDTO);
 
+	/**
+	 * id 로 회원 찾기
+	 */
+	CustomerDTO selectById(String id);
 }

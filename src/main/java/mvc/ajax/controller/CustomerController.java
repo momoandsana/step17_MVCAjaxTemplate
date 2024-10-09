@@ -87,8 +87,6 @@ public class CustomerController implements RestController {
 		
 		List<CustomerDTO> customerList=customerService.selectAll();
 
-
-
 		Gson gson=new Gson();
 		String jsonResponse=gson.toJson(customerList);
 
@@ -106,8 +104,38 @@ public class CustomerController implements RestController {
 	public void update(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
+		String id=request.getParameter("id");
+		String name=request.getParameter("name");
+		int age=Integer.parseInt(request.getParameter("age"));
+		String tel=request.getParameter("tel");
+		String addr=request.getParameter("addr");
+
+		CustomerDTO customerDTO=new CustomerDTO(id, name, age, tel, addr);
+		System.out.println(customerDTO);
+
+		int result=customerService.update(customerDTO);
+
+		PrintWriter out = response.getWriter();
+		out.print(result);
 		
-		
+	}
+
+	/*
+	아이디로 고객 정보 가지고 오기(추가)
+	 */
+	public void selectById(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException
+	{
+		String id=request.getParameter("id");
+
+		CustomerDTO customerDTO=customerService.selectById(id);
+
+		Gson gson=new Gson();
+		String jsonResponse=gson.toJson(customerDTO);
+
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter out=response.getWriter();
+		out.print(jsonResponse);
 	}
 	
 	/**

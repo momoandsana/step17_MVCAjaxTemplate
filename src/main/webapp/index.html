@@ -26,12 +26,12 @@
 				url: "/ajax?key=customer&methodName=selectAll",
 				type: "get",
 				dataType: "json",
-				success: function(result) {
+				success: function (result) {
 					let str = "";
-					$.each(result, function(index, user) {
+					$.each(result, function (index, user) {
 						str += "<tr>";
 						str += "<td>" + (index + 1) + "</td>";
-						str += "<td>" + user.id + "</td>";
+						str += "<td class='userId' style='cursor:pointer;color:hotpink'>" + user.id + "</td>"; // 아이디 클릭 시 수정 가능하게 설정
 						str += "<td>" + user.name + "</td>";
 						str += "<td>" + user.age + "</td>";
 						str += "<td>" + user.tel + "</td>";
@@ -41,51 +41,46 @@
 					});
 					$("#listTable tbody").html(str);
 				},
-				error: function() {
+				error: function () {
 					alert("전체검색 중 오류가 발생했습니다.");
 				}
 			});
 
 			/*
-              2) 아이디중복체크
+              2) 아이디 중복 체크
             */
-			$(document).on("blur","#id",function(){
-				const userId=$(this).val();
+			$(document).on("blur", "#id", function () {
+				const userId = $(this).val();
 
-				if(userId!=="")
-				{
+				if (userId !== "") {
 					$.ajax({
 						url: "/ajax?key=customer&methodName=idCheck",
 						type: "get",
-						data:{id:userId},
-						success:function(result){
-							if(result==="중복")
-							{
+						data: {id: userId},
+						success: function (result) {
+							if (result === "중복") {
 								$("span").text("중복된 아이디입니다");
-							}
-							else
-							{
+							} else {
 								$("span").text("사용 가능한 아이디입니다");
 							}
 						}
 					})
 				}
-			})
+			});
 
 			/**
-			 3) 가입하기 또는 수정하기
-
+			 3) 가입하기
 			 */
-			$(document).on("click", "#btn", function() {
+			$(document).on("click", "#btn", function () {
 				$.ajax({
 					url: "/ajax?key=customer&methodName=insert",
 					type: "post",
 					data: $("#inForm").serialize(), // 폼 데이터를 직렬화하여 서버로 전송
-					success: function(result) {
+					success: function (result) {
 						alert("가입 완료");
 						reloadCustomerList(); // 가입 후 전체 목록을 다시 불러옴
 					},
-					error: function() {
+					error: function () {
 						alert("가입 중 오류가 발생했습니다.");
 					}
 				});
@@ -93,32 +88,71 @@
 
 			/*
               4) 아이디를 클릭했을 때
-              -
+              - 해당 고객 정보를 조회하여 수정 가능하게 함
             */
+			$(document).on("click", ".userId", function () {
+				const userId = $(this).text();  // 클릭한 아이디 값을 가져옴
+
+				$.ajax({
+					url: "/ajax?key=customer&methodName=selectById",
+					type: "get",
+					data: { id: userId },
+					dataType: "json",
+					success: function (user) {
+
+						$("#id").val(user.id).prop("readOnly", true);  // 아이디는 수정 불가
+						$("#name").val(user.name);
+						$("#age").val(user.age);
+						$("#tel").val(user.tel);
+						$("#addr").val(user.addr);
+
+						// 수정하기 버튼 활성화
+						$("#editBtn").prop("disabled", false);
+					},
+					error: function () {
+						alert("고객 정보 조회 실패");
+					}
+				});
+			});
 
 			/*
-              5) 삭제하기
-
+              5) 수정하기 버튼 클릭 시
+              - 폼에 입력된 정보를 수정
             */
-			$(document).on("click", ".deleteBtn", function() {
+			$(document).on("click", "#editBtn", function () {
+				$.ajax({
+					url: "/ajax?key=customer&methodName=update",
+					type: "post",
+					data: $("#inForm").serialize(),
+					success: function (result) {
+						alert("수정 완료");
+						reloadCustomerList();  // 수정 후 고객 리스트 다시 불러오기, 수정한거 반영해서
+						resetForm();  // 폼 초기화, 칸 비우기
+					},
+					error: function () {
+						alert("수정 중 오류가 발생했습니다.");
+					}
+				});
+			});
+
+			/*
+              6) 삭제하기
+            */
+			$(document).on("click", ".deleteBtn", function () {
 				const userId = $(this).data("id"); // 버튼에 저장된 사용자 id
 				$.ajax({
 					url: "/ajax?key=customer&methodName=delete",
 					type: "get",
 					data: { id: userId },
-					success: function(result) {
-						if(result==='1')
-						{
+					success: function (result) {
+						if (result === '1') {
 							alert("삭제 완료");
-							reloadCustomerList(); // 삭제 후 목록을 다시 불러옴. 이거 안 하면 삭제했는데 계속 목록에 남아있음
+							reloadCustomerList(); // 삭제 후 목록을 다시 불러옴, 삭제된거 반영한 목록으로
+						} else {
+							alert("삭제 중 오류가 발생했습니다.");
 						}
-						else
-						{
-							alert("삭제 중 오류a가 발생했습니다.");
-						}
-
 					},
-					error: function() {
+					error: function () {
 						alert("삭제 중 오류가 발생했습니다.");
 					}
 				});
@@ -132,12 +166,12 @@
 				url: "/ajax?key=customer&methodName=selectAll",
 				type: "get",
 				dataType: "json",
-				success: function(result) {
+				success: function (result) {
 					let str = "";
-					$.each(result, function(index, user) {
+					$.each(result, function (index, user) {
 						str += "<tr>";
 						str += "<td>" + (index + 1) + "</td>";
-						str += "<td>" + user.id + "</td>";
+						str += "<td class='userId' style='cursor:pointer;color:hotpink'>" + user.id + "</td>";
 						str += "<td>" + user.name + "</td>";
 						str += "<td>" + user.age + "</td>";
 						str += "<td>" + user.tel + "</td>";
@@ -146,14 +180,20 @@
 						str += "</tr>";
 					});
 					$("#listTable tbody").html(str);
-					// tbody 안에 데이터를 추가, tbody & thead 제대로 구분 안 하면 내용물 삭제했는데 thead 도 같이 없어지는 현상이 있음
+					// tbody 안에 데이터를 추가, tbody & thead 제대로 구분 안 하면 내용물 삭제했는데 thead도 같이 없어지는 현상이 있음
 				},
-				error: function() {
+				error: function () {
 					alert("전체검색 중 오류가 발생했습니다.");
 				}
 			});
 		}
 
+		// 폼 초기화 함수-> 수정할 때 필요
+		function resetForm() {
+			$("#inForm")[0].reset();
+			$("#id").prop("readonly", false);  // 아이디 필드를 다시 활성화, 앞에서 아이디는 수정 못하게 막았으니까
+			$("#editBtn").prop("disabled", true);  // 수정 버튼 비활성화
+		}
 	</script>
 
 </head>
@@ -181,6 +221,8 @@
 				<input type="hidden" name="key" value="customer">
 				<input type="hidden" name="methodName" value="insert">
 				<input type="button" value="가입하기" id="btn">
+				<input type="button" value="수정하기" id="editBtn">
+				<!-- 수정하기 버튼 생성 -->
 			</td>
 		</tr>
 	</table>

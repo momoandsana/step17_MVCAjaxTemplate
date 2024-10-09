@@ -34,4 +34,8 @@ public class CustomerServiceImpl  implements CustomerService{
 		return customerDAO.update(customerDTO);
 	}
 
+	@Override
+	public CustomerDTO selectById(String id) {
+		return customerDAO.selectById(id);
+	}
 }

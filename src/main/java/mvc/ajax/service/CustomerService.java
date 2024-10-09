@@ -31,4 +31,6 @@ public interface CustomerService {
 	 * */
 	int update(CustomerDTO customerDTO);
 
+	CustomerDTO selectById(String id);
+
 }
