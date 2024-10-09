@@ -30,7 +30,7 @@ public class CustomerController implements RestController {
    
 	/**
 	 * 아디중복체크
-	 *  : 중복입니다, 사용가능합니다  String 응답
+	 *
 	 * */
 	public void idCheck(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
@@ -57,7 +57,7 @@ public class CustomerController implements RestController {
 	
 	/**
 	 * 등록하기
-	 *  : 서비스 리턴한 int형 그대로 응답
+	 *  : 서비스 리턴한 int 그대로 응답
 	 * */
 	public void insert(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException

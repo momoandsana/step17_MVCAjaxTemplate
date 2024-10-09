@@ -74,11 +74,11 @@
 
 			/**
 			 3) 가입하기 또는 수정하기
-			 - 가입 버튼을 눌렀을 때 서버로 데이터를 보내는 로직 추가
+
 			 */
 			$(document).on("click", "#btn", function() {
 				$.ajax({
-					url: "/ajax?key=customer&methodName=insert", // 가입 요청
+					url: "/ajax?key=customer&methodName=insert",
 					type: "post",
 					data: $("#inForm").serialize(), // 폼 데이터를 직렬화하여 서버로 전송
 					success: function(result) {
@@ -86,26 +86,26 @@
 						reloadCustomerList(); // 가입 후 전체 목록을 다시 불러옴
 					},
 					error: function() {
-						alert("가입 중 오류가 발생했습니다."); // 가입 실패 시 알림
+						alert("가입 중 오류가 발생했습니다.");
 					}
 				});
 			});
 
 			/*
               4) 아이디를 클릭했을 때
-              - 이 부분은 아직 구현되지 않음
+              -
             */
 
 			/*
               5) 삭제하기
-              - 각 행의 '삭제' 버튼을 클릭했을 때 해당 사용자를 삭제
+
             */
 			$(document).on("click", ".deleteBtn", function() {
 				const userId = $(this).data("id"); // 버튼에 저장된 사용자 id
 				$.ajax({
 					url: "/ajax?key=customer&methodName=delete",
 					type: "get",
-					data: { id: userId }, // 사용자 ID를 서버로 전송
+					data: { id: userId },
 					success: function(result) {
 						if(result==='1')
 						{
